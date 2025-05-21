@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Security Assessment Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="login-overlay" class="overlay">
+        <div class="login-container">
+            <h2>Food Security Assessment</h2>
+            <p>Please enter your email to access the dashboard</p>
+            <div class="input-group mb-3">
+                <input type="email" id="login-email" class="form-control" placeholder="Email address" required>
+                <button class="btn btn-primary" type="button" id="login-button">Access Dashboard</button>
+            </div>
+            <div class="demo-note">
+                <p><small>Note: This is a demonstration of the login system. In a production environment, this would be connected to a secure authentication service.</small></p>
+                <p><small>For demo purposes, any email address will work.</small></p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Food Security Assessment Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#findings">Key Findings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparative">Comparative Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#recommendations">Recommendations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#downloads">Downloads</a>
+                    </li>
+                </ul>
+                <div class="ms-auto">
+                    <span class="navbar-text me-3" id="user-email"></span>
+                    <button class="btn btn-outline-light btn-sm" id="logout-button">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <section id="dashboard" class="mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h2>Executive Summary</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>This comprehensive food security needs assessment presents findings from multiple assessments conducted in the region, including detailed analyses from Jnah and Bourj al Barajneh camp areas, as well as critical wartime data collected during October-January. The assessment reveals significant food security challenges across the assessed areas, with varying levels of severity before, during, and after the conflict period.</p>
+                            <div class="row mt-4">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100 border-primary">
+                                        <div class="card-header bg-primary text-white">Food Consumption</div>
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4">57.4%</h3>
+                                            <p>Households with acceptable food consumption</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100 border-danger">
+                                        <div class="card-header bg-danger text-white">Coping Strategies</div>
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4">84.3%</h3>
+                                            <p>Households with high Coping Strategy Index</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100 border-warning">
+                                        <div class="card-header bg-warning text-dark">Wartime Needs</div>
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4">98.8%</h3>
+                                            <p>Individuals requiring food assistance during conflict</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3>Food Consumption Score Categories</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="fcsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="form-group">
+                                <label for="fcsFilter" class="form-label">Filter by:</label>
+                                <select class="form-select" id="fcsFilter">
+                                    <option value="all">All Data</option>
+                                    <option value="prewar">Pre-War</option>
+                                    <option value="postwar">Post-War</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3>Coping Strategy Index Distribution</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="csiChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="form-group">
+                                <label for="csiFilter" class="form-label">Filter by:</label>
+                                <select class="form-select" id="csiFilter">
+                                    <option value="all">All Data</option>
+                                    <option value="prewar">Pre-War</option>
+                                    <option value="postwar">Post-War</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h3>Executive Summary Dashboard</h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="images/executive_summary_dashboard.png" alt="Executive Summary Dashboard" class="img-fluid dashboard-image">
+                            <p class="mt-3"><em>Figure 1: Executive Summary Dashboard of Key Food Security Indicators</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="findings" class="mb-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2>Key Findings</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h3>Food Consumption Patterns</h3>
+                            <p>Analysis of food consumption patterns revealed varying levels of dietary diversity and frequency across the assessed areas. The most frequently consumed food groups are cereals, oils and fats, and spices, while the least frequently consumed are meat, fish, eggs, fruits, and legumes.</p>
+                            <div class="chart-container mt-4">
+                                <canvas id="foodGroupsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h3>Coping Strategies</h3>
+                            <p>The assessment identified widespread use of negative coping strategies among households in the region, with an average Coping Strategy Index of 19.0, indicating high levels of food insecurity.</p>
+                            <div class="chart-container mt-4">
+                                <canvas id="copingStrategiesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h3>Key Findings Infographic</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <img src="images/key_findings_infographic.png" alt="Key Findings Infographic" class="img-fluid dashboard-image">
+                                    <p class="mt-3"><em>Figure 2: Key Food Security Findings Infographic</em></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Demographic Profile</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total households assessed
+                                            <span class="badge bg-primary rounded-pill">525</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total individuals
+                                            <span class="badge bg-primary rounded-pill">2,416</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Average household size
+                                            <span class="badge bg-primary rounded-pill">4.6 persons</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Children and adolescents (0-18 years)
+                                            <span class="badge bg-warning rounded-pill">31.4%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Elderly (65+ years)
+                                            <span class="badge bg-warning rounded-pill">4.6%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Vulnerable Demographics</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <img src="images/vulnerable_demographics.png" alt="Age Distribution with Vulnerable Groups Highlighted" class="img-fluid">
+                                    <p class="mt-3"><em>Figure 3: Age Distribution with Vulnerable Groups Highlighted</em></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparative" class="mb-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2>Comparative Analysis: Before, During, and After War</h2>
+                </div>
+                <div class="card-body">
+                    <p>The comparison between regular and wartime assessments provides valuable temporal context on how food security needs evolved throughout the crisis:</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-lg-8 mx-auto mb-4">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h3>Food Needs Before, During, and After War</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <img src="images/before_during_after_comparison.png" alt="Food Needs Before, During, and After War" class="img-fluid">
+                                    <p class="mt-3"><em>Figure 4: Food Needs Before, During, and After War</em></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Interactive Temporal Comparison</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="temporalComparisonChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="form-group">
+                                        <label for="needsFilter" class="form-label">Select need type:</label>
+                                        <select class="form-select" id="needsFilter">
+                                            <option value="food">Food Needs</option>
+                                            <option value="hygiene">Hygiene Needs</option>
+                                            <option value="medical">Medical Needs</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Key Observations</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="accordion" id="observationsAccordion">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingOne">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    Increased Vulnerability
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#observationsAccordion">
+                                                <div class="accordion-body">
+                                                    The wartime data shows a dramatic increase in food needs (98.8%) compared to the regular assessment, where 41.5% had poor or borderline FCS.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    Demographic Insights
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#observationsAccordion">
+                                                <div class="accordion-body">
+                                                    The wartime assessment reveals that 31.4% of the affected population are children and adolescents (0-18 years), highlighting the significant impact on vulnerable age groups.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingThree">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    Multiple Needs
+                                                </button>
+                                            </h2>
+                                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#observationsAccordion">
+                                                <div class="accordion-body">
+                                                    The high prevalence of both food and hygiene needs during the conflict period (>96%) demonstrates the compounding nature of crises, where multiple basic needs are compromised simultaneously.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingFour">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                    Recovery Challenges
+                                                </button>
+                                            </h2>
+                                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#observationsAccordion">
+                                                <div class="accordion-body">
+                                                    Post-war data shows improvement from crisis levels but remains worse than pre-war conditions, indicating the long-lasting impact of conflict on food security.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recommendations" class="mb-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2>Recommendations</h2>
+                </div>
+                <div class="card-body">
+                    <p>Based on the combined assessment findings, the following recommendations are proposed for humanitarian interventions in the region:</p>
+                    
+                    <ul class="nav nav-tabs" id="recommendationsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="immediate-tab" data-bs-toggle="tab" data-bs-target="#immediate" type="button" role="tab" aria-controls="immediate" aria-selected="true">Immediate-Term (0-3 months)</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="medium-tab" data-bs-toggle="tab" data-bs-target="#medium" type="button" role="tab" aria-controls="medium" aria-selected="false">Medium-Term (3-6 months)</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="long-tab" data-bs-toggle="tab" data-bs-target="#long" type="button" role="tab" aria-controls="long" aria-selected="false">Long-Term (6-12 months)</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="recommendationsTabContent">
+                        <div class="tab-pane fade show active" id="immediate" role="tabpanel" aria-labelledby="immediate-tab">
+                            <div class="card mb-3 border-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">Emergency Food Assistance</h5>
+                                    <p class="card-text">Provide targeted food assistance to households with poor FCS, high CSI, and those identified in the wartime assessment, focusing on nutritionally balanced food baskets that address identified dietary gaps.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">Cash-Based Interventions</h5>
+                                    <p class="card-text">Implement cash or voucher programs to enhance food purchasing power, particularly for households relying on credit for food purchases and those with borderline FCS.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">Hygiene Kits Distribution</h5>
+                                    <p class="card-text">Address the high prevalence of hygiene needs (96.9% during conflict) through distribution of hygiene kits to prevent public health crises.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="medium" role="tabpanel" aria-labelledby="medium-tab">
+                            <div class="card mb-3 border-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Livelihood Support</h5>
+                                    <p class="card-text">Develop and implement livelihood enhancement programs to increase household income and reduce dependence on cash purchases as the sole food source.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Community Food Systems</h5>
+                                    <p class="card-text">Establish community gardens or cooperative food production initiatives to increase access to fresh vegetables and fruits, addressing the identified dietary diversity gaps.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Age-Appropriate Interventions</h5>
+                                    <p class="card-text">Develop targeted programs for vulnerable age groups identified in the wartime assessment, including supplementary feeding for children and specialized support for the elderly.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="long" role="tabpanel" aria-labelledby="long-tab">
+                            <div class="card mb-3 border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Resilience Building</h5>
+                                    <p class="card-text">Implement comprehensive resilience-building programs that address the underlying economic vulnerabilities contributing to food insecurity.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Social Protection</h5>
+                                    <p class="card-text">Advocate for and support the development of social protection mechanisms that provide safety nets for vulnerable households.</p>
+                                </div>
+                            </div>
+                            <div class="card mb-3 border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Preparedness Planning</h5>
+                                    <p class="card-text">Develop community-based emergency preparedness plans to mitigate the impact of future crises on food security and basic needs.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="downloads" class="mb-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2>Downloads</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Reports</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Food Security Needs Assessment (Full Report)</span>
+                                                <a href="downloads/Food_Security_Needs_Assessment_OCHA_Proposal.pdf" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Executive Summary</span>
+                                                <a href="downloads/Executive_Summary.pdf" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Methodology Details</span>
+                                                <a href="downloads/Methodology_Details.pdf" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h3>Data & Visuals</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Food Security Assessment Data (Excel)</span>
+                                                <a href="downloads/Integrated_Food_Security_Assessment.xlsx" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Executive Summary Dashboard (PNG)</span>
+                                                <a href="images/executive_summary_dashboard.png" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Key Findings Infographic (PNG)</span>
+                                                <a href="images/key_findings_infographic.png" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Before/During/After Comparison (PNG)</span>
+                                                <a href="images/before_during_after_comparison.png" class="btn btn-primary btn-sm" download>Download</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Food Security Assessment Dashboard</h5>
+                    <p>This interactive dashboard presents findings from comprehensive food security assessments conducted in the region.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#dashboard" class="text-white">Dashboard</a></li>
+                        <li><a href="#findings" class="text-white">Key Findings</a></li>
+                        <li><a href="#comparative" class="text-white">Comparative Analysis</a></li>
+                        <li><a href="#recommendations" class="text-white">Recommendations</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#downloads" class="text-white">Downloads</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 Food Security Assessment. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
